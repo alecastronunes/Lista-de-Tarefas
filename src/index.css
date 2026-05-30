@@ -1,0 +1,18 @@
+@import "tailwindcss";
+
+@theme {
+  --color-*: initial;
+  --color-white: #fff;
+  --color-blue: #3b82f6;
+  --color-background-pages: #eff6ff;
+  --color-orange: #d16900;
+  --color-darkgray: #64728b;
+  --color-light-gray: #d3e4fe;
+  --color-hover-blue-button: #81aaff;
+}
+
+body {
+  min-height: 100vh;
+  background-color: #eaf1fa;
+  font-family: "Inter", sans-serif;
+}
