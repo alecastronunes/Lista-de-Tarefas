@@ -15,6 +15,23 @@ export function Todas() {
             Adicionar
           </button>
         </form>
+
+        {/* Filtrar tarefas */}
+        <section className="min-w-dvh h-screen">
+          <div className="flex mt-5">
+            <button className="pr-4 text-darkgray font-medium cursor-pointer hover:font-semibold hover:border-b border-b-blue hover:text-blue">
+              Todas
+            </button>
+
+            <button className="pr-4 text-darkgray font-medium cursor-pointer hover:font-semibold hover:border-b border-b-blue hover:text-blue">
+              Pendentes
+            </button>
+
+            <button className="pr-4 text-darkgray font-medium cursor-pointer hover:font-semibold hover:border-b border-b-blue hover:text-blue">
+              Concluídas
+            </button>
+          </div>
+        </section>
       </main>
     </div>
   );
