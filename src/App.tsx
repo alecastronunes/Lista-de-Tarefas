@@ -3,11 +3,17 @@ import { Todas } from "./pages/todas";
 import { Pendentes } from "./pages/pendentes";
 import { Concluidas } from "./pages/concluidas";
 import { Login } from "./pages/login";
+import { Private } from "./routes/private";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Todas />,
+    element: (
+      <Private>
+        {" "}
+        <Todas />
+      </Private>
+    ),
   },
   {
     path: "/login",
@@ -15,11 +21,21 @@ const router = createBrowserRouter([
   },
   {
     path: "/pendentes",
-    element: <Pendentes />,
+    element: (
+      <Private>
+        {" "}
+        <Pendentes />
+      </Private>
+    ),
   },
   {
     path: "/concluidas",
-    element: <Concluidas />,
+    element: (
+      <Private>
+        {" "}
+        <Concluidas />
+      </Private>
+    ),
   },
 ]);
 
