@@ -2,7 +2,7 @@
 // Faz a proteção das rotas
 import { auth } from "../services/firebaseConnection";
 import { onAuthStateChanged } from "firebase/auth";
-import { ReactNode, useEffect, useState } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 
 interface PrivateProps {
@@ -11,7 +11,7 @@ interface PrivateProps {
 
 export function Private({ children }: PrivateProps) {
   const [loading, setLoading] = useState(true);
-  const [signed, setSined] = useState(false);
+  const [signed, setSigned] = useState(false);
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (user) => {
@@ -22,10 +22,10 @@ export function Private({ children }: PrivateProps) {
         };
 
         setLoading(false);
-        setSined(true);
+        setSigned(true);
       } else {
         setLoading(false);
-        setSined(false);
+        setSigned(false);
       }
     });
 
@@ -36,7 +36,11 @@ export function Private({ children }: PrivateProps) {
   }, []);
 
   if (loading) {
-    <div></div>;
+    return (
+      <div className="text-2xl flex justify-center text-blue font-semibold">
+        Carregando...
+      </div>
+    );
   }
 
   if (!signed) {

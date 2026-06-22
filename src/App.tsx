@@ -10,7 +10,6 @@ const router = createBrowserRouter([
     path: "/",
     element: (
       <Private>
-        {" "}
         <Todas />
       </Private>
     ),
@@ -23,7 +22,6 @@ const router = createBrowserRouter([
     path: "/pendentes",
     element: (
       <Private>
-        {" "}
         <Pendentes />
       </Private>
     ),
@@ -32,7 +30,6 @@ const router = createBrowserRouter([
     path: "/concluidas",
     element: (
       <Private>
-        {" "}
         <Concluidas />
       </Private>
     ),
