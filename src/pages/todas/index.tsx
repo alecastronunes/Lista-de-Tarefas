@@ -34,6 +34,13 @@ export function Todas() {
     setInputTask("");
   }
 
+  function handleDelete(id: number) {
+    const newTodoList = tasks.filter((todo) => todo.id !== id);
+    console.log(newTodoList);
+    setTasks(newTodoList);
+    return;
+  }
+
   return (
     <div className="flex w-full flex-col items-center min-h-screen">
       <Header />
@@ -82,7 +89,10 @@ export function Todas() {
                         <FaPen />
                         Editar
                       </p>
-                      <p className="flex justify-center items-center gap-1.5 ml-6 cursor-pointer">
+                      <p
+                        onClick={() => handleDelete(task.id)}
+                        className="flex justify-center items-center gap-1.5 ml-6 cursor-pointer"
+                      >
                         <FaTrash />
                         Excluir
                       </p>
