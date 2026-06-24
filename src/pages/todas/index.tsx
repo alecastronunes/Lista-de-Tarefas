@@ -11,13 +11,16 @@ interface TaskProps {
 export function Todas() {
   const [inputTask, setInputTask] = useState("");
   const [tasks, setTasks] = useState<TaskProps[]>([]);
-
+  const [editedText, setEditedText] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [EditingId, setEditingId] = useState<number | null>();
   // useEffect(() => {
   //   console.log("nova tarefa", tasks);
   // }, [tasks]);
 
   function handleTodo(e: ChangeEvent) {
     e.preventDefault();
+
     if (inputTask.trim() === "") {
       toast.error("Por favor, insira uma tarefa!");
       return;
@@ -38,6 +41,42 @@ export function Todas() {
     const newTodoList = tasks.filter((todo) => todo.id !== id);
     console.log(newTodoList);
     setTasks(newTodoList);
+    return;
+  }
+
+  function handleEdit(id: number) {
+    const editTask = tasks.find((task) => task.id === id);
+
+    if (!editTask) {
+      return;
+    }
+
+    setEditingId(id);
+    setEditedText(editTask.todoText);
+    setIsModalOpen(true);
+  }
+
+  function handleCancel() {
+    setIsModalOpen(false);
+    setEditingId(null);
+    setEditedText("");
+    return;
+  }
+
+  function handleSave() {
+    const updatedTasks = tasks.map((task) => {
+      if (task.id === EditingId) {
+        return {
+          ...task,
+          todoText: editedText,
+        };
+      }
+      return task;
+    });
+
+    setTasks(updatedTasks);
+    handleCancel();
+    toast.success("Tarefa editada com sucesso!!!");
     return;
   }
 
@@ -85,7 +124,37 @@ export function Todas() {
                       <span>{task.todoText}</span>
                     </label>
                     <span className="flex w-full justify-evenly">
-                      <p className="flex justify-center items-center gap-1.5 ml-38 cursor-pointer">
+                      {isModalOpen && (
+                        <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
+                          <div className="bg-white p-4 rounded w-80">
+                            <input
+                              className="border p-2 w-full mb-3 rounded-md bg-light-gray"
+                              value={editedText}
+                              onChange={(e) => setEditedText(e.target.value)}
+                            />
+
+                            <div className="flex justify-end gap-2">
+                              <button
+                                className="cursor-pointer bg-button-cancel p-1 rounded-md font-medium"
+                                onClick={handleCancel}
+                              >
+                                Cancelar
+                              </button>
+
+                              <button
+                                className="cursor-pointer bg-blue p-1 rounded-md font-medium"
+                                onClick={handleSave}
+                              >
+                                Salvar
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                      <p
+                        onClick={() => handleEdit(task.id)}
+                        className="flex justify-center items-center gap-1.5 ml-38 cursor-pointer"
+                      >
                         <FaPen />
                         Editar
                       </p>
