@@ -18,15 +18,41 @@ interface TaskProps {
   id: number;
 }
 
+interface TodoProps {
+  id: string;
+  name: string;
+}
+
 export function Todas() {
   const [inputTask, setInputTask] = useState("");
   const [tasks, setTasks] = useState<TaskProps[]>([]);
   const [editedText, setEditedText] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [EditingId, setEditingId] = useState<number | null>();
-  // useEffect(() => {
-  //   console.log("nova tarefa", tasks);
-  // }, [tasks]);
+
+  const [todoList, setTodoList] = useState<TodoProps[]>([]);
+
+  useEffect(() => {
+    const tasksRef = collection(db, "tasks");
+    const queryRef = query(tasksRef, orderBy("created", "asc"));
+
+    const unsub = onSnapshot(queryRef, (snapshot) => {
+      const list = [] as TodoProps[];
+
+      snapshot.forEach((doc) => {
+        list.push({
+          id: doc.id,
+          name: doc.data().name,
+        });
+      });
+      setTodoList(list);
+    });
+
+    // Cancela o observer
+    return () => {
+      unsub();
+    };
+  }, []);
 
   function handleTodo(e: ChangeEvent) {
     e.preventDefault();
@@ -59,7 +85,6 @@ export function Todas() {
 
   function handleDelete(id: number) {
     const newTodoList = tasks.filter((todo) => todo.id !== id);
-    console.log(newTodoList);
     setTasks(newTodoList);
     return;
   }
@@ -134,14 +159,14 @@ export function Todas() {
             <button>Concluídas</button>
           </div>
 
-          {tasks.length > 0 ? (
+          {todoList.length > 0 ? (
             <div>
-              {tasks.map((task) => (
+              {todoList.map((task) => (
                 <ul key={task.id} className="flex flex-col mt-3">
                   <li className="flex items-center w-full border border-darkgray p-4 rounded-md bg-white">
                     <label className="flex items-center gap-3 w-full cursor-pointer">
                       <input type="checkbox" />
-                      <span>{task.todoText}</span>
+                      <span>{task.name}</span>
                     </label>
                     <span className="flex w-full justify-evenly">
                       {isModalOpen && (
