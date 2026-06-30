@@ -2,6 +2,16 @@ import { Header } from "../../components/header";
 import { useState, useEffect, type ChangeEvent } from "react";
 import { toast } from "react-toastify";
 import { FaPen, FaTrash } from "react-icons/fa";
+import {
+  addDoc,
+  collection,
+  onSnapshot,
+  query,
+  orderBy,
+  doc,
+  deleteDoc,
+} from "firebase/firestore";
+import { db } from "../../services/firebaseConnection";
 
 interface TaskProps {
   todoText: string;
@@ -25,16 +35,26 @@ export function Todas() {
       toast.error("Por favor, insira uma tarefa!");
       return;
     } else {
-      setTasks([
-        ...tasks,
-        {
-          todoText: inputTask,
-          id: Date.now(),
-        },
-      ]);
-      toast.success("Tarefa criada com sucesso!!!");
+      addDoc(collection(db, "tasks"), {
+        name: inputTask,
+        created: new Date(),
+      })
+        .then(() => {
+          setTasks([
+            ...tasks,
+            {
+              todoText: inputTask,
+              id: Date.now(),
+            },
+          ]);
+          toast.success("Tarefa criada com sucesso!!!");
+          setInputTask("");
+          console.log("Dados cadastrados com sucesso!");
+        })
+        .catch((error) => {
+          console.error("Ocorreu um erro ao cadastrar no banco " + error);
+        });
     }
-    setInputTask("");
   }
 
   function handleDelete(id: number) {
