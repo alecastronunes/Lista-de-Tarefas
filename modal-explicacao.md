@@ -9,16 +9,19 @@ Esse tipo de modal é renderizado dentro de cada item da lista.
 Ou seja, cada tarefa, card ou componente da lista possui o seu próprio bloco de renderização do modal.
 
 ### Exemplo mental
+
 - cada item da lista “sabe” se deve mostrar ou não o modal
 - o modal fica associado ao componente daquele item
 
 ### Características
+
 - mais simples de começar
 - o código fica próximo do item que o disparou
 - pode gerar repetição
 - se a condição de abertura não for bem controlada, o modal pode aparecer em vários lugares ao mesmo tempo
 
 ### Quando usar
+
 - quando a interface for bem simples
 - quando o modal é muito local e não precisa ser compartilhado
 
@@ -54,6 +57,7 @@ function Lista() {
 ```
 
 ### O que acontece aqui
+
 - o modal existe dentro de cada item
 - se `isOpen` for `true`, ele pode aparecer em todos os lugares que usam essa mesma condição
 
@@ -66,21 +70,25 @@ Ou seja, esse modelo é fácil de começar, mas pode ficar confuso.
 Nesse modelo, o modal é renderizado uma única vez no componente pai ou em um componente central.
 
 Em vez de cada item ter o seu próprio modal, o componente principal controla:
+
 - se o modal está aberto
 - qual item foi selecionado
 
 ### Exemplo mental
+
 - o usuário clica em “Editar” em uma tarefa
 - o componente guarda essa tarefa em estado
 - o modal é exibido uma vez com os dados dessa tarefa
 
 ### Características
+
 - mais limpo e organizado
 - evita duplicação de código
 - facilita o controle de estado
 - é mais escalável para projetos maiores
 
 ### Quando usar
+
 - quando o modal é usado para editar, visualizar ou confirmar ações de um item específico
 - quando você quer manter o fluxo mais previsível
 
@@ -122,6 +130,7 @@ function Lista() {
 ```
 
 ### O que acontece aqui
+
 - existe apenas um modal
 - ele usa `tarefaSelecionada` para saber qual item está sendo editado
 - isso deixa o fluxo mais organizado
@@ -140,6 +149,7 @@ A principal diferença está no controle do estado:
 ## Regra prática
 
 Se você estiver trabalhando com uma lista e quiser abrir um modal para editar um item específico, geralmente o melhor é usar:
+
 - um estado para guardar o item selecionado
 - um estado para indicar se o modal está aberto
 - um único modal renderizado no componente principal

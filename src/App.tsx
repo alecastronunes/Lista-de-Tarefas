@@ -4,6 +4,7 @@ import { Pendentes } from "./pages/pendentes";
 import { Concluidas } from "./pages/concluidas";
 import { Login } from "./pages/login";
 import { Private } from "./routes/private";
+import { ErrorPage } from "./pages/error";
 
 const router = createBrowserRouter([
   {
@@ -33,6 +34,10 @@ const router = createBrowserRouter([
         <Concluidas />
       </Private>
     ),
+  },
+  {
+    path: "*",
+    element: <ErrorPage />,
   },
 ]);
 

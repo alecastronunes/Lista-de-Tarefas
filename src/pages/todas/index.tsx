@@ -143,15 +143,18 @@ export function Todas() {
             <div>
               {todoList.map((task) => (
                 <ul key={task.id} className="flex flex-col mt-3">
-                  <li className="flex items-center w-full border border-darkgray p-4 rounded-md bg-white">
-                    <label className="flex items-center gap-3 w-full cursor-pointer">
-                      <input type="checkbox" />
-                      <span>{task.name}</span>
+                  <li className="flex flex-col gap-3 w-full border border-darkgray p-4 rounded-md bg-white sm:flex-row sm:items-center">
+                    <label className="flex items-start gap-3 flex-1 min-w-0 cursor-pointer">
+                      <input type="checkbox" className="mt-1 shrink-0" />
+                      <span className="break-words whitespace-normal">
+                        {task.name}
+                      </span>
                     </label>
-                    <span className="flex w-full justify-evenly">
+
+                    <div className="flex flex-wrap items-center justify-end gap-3 w-full sm:w-auto sm:ml-4">
                       {isModalOpen && editingId === task.id && (
                         <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
-                          <div className="bg-white p-4 rounded w-80">
+                          <div className="bg-white p-4 rounded w-[90%] max-w-80">
                             <input
                               className="border p-2 w-full mb-3 rounded-md bg-light-gray"
                               value={editedText}
@@ -160,6 +163,7 @@ export function Todas() {
 
                             <div className="flex justify-end gap-2">
                               <button
+                                type="button"
                                 className="cursor-pointer bg-button-cancel p-1 rounded-md font-medium"
                                 onClick={handleCancel}
                               >
@@ -167,6 +171,7 @@ export function Todas() {
                               </button>
 
                               <button
+                                type="button"
                                 className="cursor-pointer bg-blue p-1 rounded-md font-medium"
                                 onClick={() => handleSave(task.id)}
                               >
@@ -176,21 +181,25 @@ export function Todas() {
                           </div>
                         </div>
                       )}
-                      <p
+
+                      <button
+                        type="button"
                         onClick={() => handleEdit(task)}
-                        className="flex justify-center items-center gap-1.5 ml-38 cursor-pointer"
+                        className="flex items-center gap-1.5 text-sm cursor-pointer"
                       >
                         <FaPen />
-                        Editar
-                      </p>
-                      <p
+                        <span>Editar</span>
+                      </button>
+
+                      <button
+                        type="button"
                         onClick={() => handleDelete(task.id)}
-                        className="flex justify-center items-center gap-1.5 ml-6 cursor-pointer"
+                        className="flex items-center gap-1.5 text-sm cursor-pointer"
                       >
                         <FaTrash />
-                        Excluir
-                      </p>
-                    </span>
+                        <span>Excluir</span>
+                      </button>
+                    </div>
                   </li>
                 </ul>
               ))}
