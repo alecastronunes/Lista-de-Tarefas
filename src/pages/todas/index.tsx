@@ -10,13 +10,9 @@ import {
   orderBy,
   doc,
   deleteDoc,
+  updateDoc,
 } from "firebase/firestore";
 import { db } from "../../services/firebaseConnection";
-
-interface TaskProps {
-  todoText: string;
-  id: number;
-}
 
 interface TodoProps {
   id: string;
@@ -25,11 +21,9 @@ interface TodoProps {
 
 export function Todas() {
   const [inputTask, setInputTask] = useState("");
-  const [tasks, setTasks] = useState<TaskProps[]>([]);
   const [editedText, setEditedText] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [EditingId, setEditingId] = useState<number | null>();
-
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [todoList, setTodoList] = useState<TodoProps[]>([]);
 
   useEffect(() => {
@@ -58,46 +52,32 @@ export function Todas() {
     e.preventDefault();
 
     if (inputTask.trim() === "") {
-      toast.error("Por favor, insira uma tarefa!");
+      toast.warn("Por favor, insira uma tarefa!");
       return;
-    } else {
-      addDoc(collection(db, "tasks"), {
-        name: inputTask,
-        created: new Date(),
+    }
+
+    addDoc(collection(db, "tasks"), {
+      name: inputTask.trim(),
+      created: new Date(),
+    })
+      .then(() => {
+        toast.success("Tarefa criada com sucesso!!!");
+        setInputTask("");
       })
-        .then(() => {
-          setTasks([
-            ...tasks,
-            {
-              todoText: inputTask,
-              id: Date.now(),
-            },
-          ]);
-          toast.success("Tarefa criada com sucesso!!!");
-          setInputTask("");
-          console.log("Dados cadastrados com sucesso!");
-        })
-        .catch((error) => {
-          console.error("Ocorreu um erro ao cadastrar no banco " + error);
-        });
-    }
+      .catch((error) => {
+        console.error("Ocorreu um erro ao cadastrar no banco " + error);
+      });
   }
 
-  function handleDelete(id: number) {
-    const newTodoList = tasks.filter((todo) => todo.id !== id);
-    setTasks(newTodoList);
-    return;
+  async function handleDelete(id: string) {
+    const docRef = doc(db, "tasks", id);
+    await deleteDoc(docRef);
+    toast.success("Tarefa excluída com sucesso!!!");
   }
 
-  function handleEdit(id: number) {
-    const editTask = tasks.find((task) => task.id === id);
-
-    if (!editTask) {
-      return;
-    }
-
-    setEditingId(id);
-    setEditedText(editTask.todoText);
+  function handleEdit(task: TodoProps) {
+    setEditingId(task.id);
+    setEditedText(task.name);
     setIsModalOpen(true);
   }
 
@@ -105,24 +85,24 @@ export function Todas() {
     setIsModalOpen(false);
     setEditingId(null);
     setEditedText("");
-    return;
   }
 
-  function handleSave() {
-    const updatedTasks = tasks.map((task) => {
-      if (task.id === EditingId) {
-        return {
-          ...task,
-          todoText: editedText,
-        };
-      }
-      return task;
-    });
+  async function handleSave(id: string) {
+    if (editedText.trim() === "") {
+      toast.warn("O texto da tarefa não pode ficar vazio!");
+      return;
+    }
 
-    setTasks(updatedTasks);
-    handleCancel();
-    toast.success("Tarefa editada com sucesso!!!");
-    return;
+    const docRef = doc(db, "tasks", id);
+
+    try {
+      await updateDoc(docRef, { name: editedText.trim() });
+      handleCancel();
+      toast.success("Tarefa editada com sucesso!!!");
+    } catch (error) {
+      console.error("Erro ao atualizar a tarefa: " + error);
+      toast.error("Não foi possível editar a tarefa.");
+    }
   }
 
   return (
@@ -169,7 +149,7 @@ export function Todas() {
                       <span>{task.name}</span>
                     </label>
                     <span className="flex w-full justify-evenly">
-                      {isModalOpen && (
+                      {isModalOpen && editingId === task.id && (
                         <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
                           <div className="bg-white p-4 rounded w-80">
                             <input
@@ -188,7 +168,7 @@ export function Todas() {
 
                               <button
                                 className="cursor-pointer bg-blue p-1 rounded-md font-medium"
-                                onClick={handleSave}
+                                onClick={() => handleSave(task.id)}
                               >
                                 Salvar
                               </button>
@@ -197,7 +177,7 @@ export function Todas() {
                         </div>
                       )}
                       <p
-                        onClick={() => handleEdit(task.id)}
+                        onClick={() => handleEdit(task)}
                         className="flex justify-center items-center gap-1.5 ml-38 cursor-pointer"
                       >
                         <FaPen />
