@@ -17,6 +17,7 @@ import { db } from "../../services/firebaseConnection";
 interface TodoProps {
   id: string;
   name: string;
+  completed: boolean;
 }
 
 export function Todas() {
@@ -37,6 +38,7 @@ export function Todas() {
         list.push({
           id: doc.id,
           name: doc.data().name,
+          completed: doc.data().completed || false,
         });
       });
       setTodoList(list);
@@ -59,6 +61,7 @@ export function Todas() {
     addDoc(collection(db, "tasks"), {
       name: inputTask.trim(),
       created: new Date(),
+      completed: false,
     })
       .then(() => {
         toast.success("Tarefa criada com sucesso!!!");
@@ -105,6 +108,17 @@ export function Todas() {
     }
   }
 
+  async function handleToggleComplete(id: string, completed: boolean) {
+    const docRef = doc(db, "tasks", id);
+
+    try {
+      await updateDoc(docRef, { completed: !completed });
+    } catch (error) {
+      console.error("Erro ao atualizar status da tarefa: " + error);
+      toast.error("Não foi possível atualizar o status.");
+    }
+  }
+
   return (
     <div className="flex w-full flex-col items-center min-h-screen">
       <Header />
@@ -145,8 +159,19 @@ export function Todas() {
                 <ul key={task.id} className="flex flex-col mt-3">
                   <li className="flex flex-col gap-3 w-full border border-darkgray p-4 rounded-md bg-white sm:flex-row sm:items-center">
                     <label className="flex items-start gap-3 flex-1 min-w-0 cursor-pointer">
-                      <input type="checkbox" className="mt-1 shrink-0" />
-                      <span className="break-words whitespace-normal">
+                      <input
+                        type="checkbox"
+                        checked={task.completed}
+                        onChange={() =>
+                          handleToggleComplete(task.id, task.completed)
+                        }
+                        className="mt-1 shrink-0"
+                      />
+                      <span
+                        className={`break-words whitespace-normal ${
+                          task.completed ? "line-through text-gray-500" : ""
+                        }`}
+                      >
                         {task.name}
                       </span>
                     </label>
